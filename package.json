@@ -1,0 +1,27 @@
+{
+  "name": "anicixor-promo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "capture": "node scripts/capture.mjs",
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Promo out/anicixor-promo.mp4 --codec=h264 --pixel-format=yuv420p --crf=18 --gl=swangle",
+    "verify": "node scripts/verify.mjs out/anicixor-promo.mp4",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.535",
+    "@remotion/google-fonts": "4.0.535",
+    "@remotion/motion-blur": "4.0.535",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "playwright": "1.56.1",
+    "typescript": "5.9.3"
+  }
+}
