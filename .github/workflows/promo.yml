@@ -1,0 +1,103 @@
+# Anicixor tanıtım videosu: gerçek siteyi yakala (Playwright) -> Remotion ile render et -> MP4'ü doğrula -> yayınla.
+# Gizli anahtar kullanılmaz; yalnızca GitHub'ın yerleşik GITHUB_TOKEN'ı (bu repoya yazma) kullanılır.
+name: Promo Video
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["README.md"]
+  workflow_dispatch:
+    inputs:
+      profile_username:
+        description: "Profil sahnesi için herkese açık kullanıcı adı (boş bırakılırsa atlanır)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: promo
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BASE_URL: https://anicixor.fun
+      PROFILE_USERNAME: ${{ github.event.inputs.profile_username }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Bağımlılıkları kur
+        run: npm install --no-audit --no-fund
+
+      - name: Tip kontrolü
+        run: npm run typecheck
+
+      - name: Chrome (H.264 destekli) kur
+        run: npx playwright install --with-deps chrome
+
+      - name: FFmpeg kontrolü
+        run: which ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Gerçek siteyi yakala
+        id: capture
+        shell: bash
+        run: |
+          mkdir -p report out
+          node scripts/capture.mjs 2>&1 | tee report/capture.log
+
+      - name: Remotion ile render et
+        id: render
+        shell: bash
+        run: |
+          npx remotion render src/index.ts Promo out/anicixor-promo.mp4 \
+            --codec=h264 --pixel-format=yuv420p --crf=18 --gl=swangle --log=info 2>&1 | tee report/render.log
+
+      - name: MP4'ü doğrula
+        id: verify
+        shell: bash
+        run: node scripts/verify.mjs out/anicixor-promo.mp4 2>&1 | tee report/verify.log
+
+      - name: Çıktıları artifact olarak yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: promo-${{ github.run_number }}
+          path: |
+            out/anicixor-promo.mp4
+            report/
+          if-no-files-found: warn
+
+      - name: Release oluştur (telefondan indirilebilir)
+        if: steps.verify.outcome == 'success'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          (cd public && zip -qr ../captures.zip captures)
+          gh release create "run-${{ github.run_number }}" out/anicixor-promo.mp4 captures.zip \
+            --title "Anicixor tanıtım videosu #${{ github.run_number }}" \
+            --notes "Gerçek anicixor.fun yakalamalarıyla üretildi. Doğrulama: reports dalındaki verify.json"
+
+      - name: Raporu 'reports' dalına yaz
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/rep && cp -r report/. /tmp/rep/ 2>/dev/null || true
+          cp src/manifest.json /tmp/rep/manifest.json 2>/dev/null || true
+          echo "run=${{ github.run_number }} sha=${{ github.sha }} capture=${{ steps.capture.outcome }} render=${{ steps.render.outcome }} verify=${{ steps.verify.outcome }}" > /tmp/rep/STATUS.txt
+          cd /tmp/rep
+          git init -q -b reports
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Rapor: run ${{ github.run_number }}"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git push -q -f origin reports
