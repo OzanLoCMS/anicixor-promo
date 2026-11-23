@@ -22,7 +22,8 @@ concurrency:
 
 jobs:
   render:
-    runs-on: ubuntu-latest
+    # ubuntu-latest artık 26.04; Playwright 1.56.1 desteklemiyor. Desteklenen sürüme sabitlendi.
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
       BASE_URL: https://anicixor.fun
