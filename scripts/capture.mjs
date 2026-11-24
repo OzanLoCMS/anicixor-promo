@@ -121,6 +121,11 @@ const cardRects = async (vp = false) =>
 
 const manifest = { capturedAt: new Date().toISOString() };
 
+const writeReport = async () => {
+  report.finishedAt = new Date().toISOString();
+  await fs.writeFile("report/capture-report.json", JSON.stringify(report, null, 2));
+};
+
 // ---- Logo ----
 await step("logo", async () => {
   const res = await page.request.get(BASE + "/favicon.png");
@@ -136,6 +141,11 @@ manifest.home = await step("home", async () => {
   report.homeStatus = resp?.status();
   await settle(); await dismiss(); await warm(); await privacyHide("home");
   report.homeTitle = await page.title();
+  // Koruma: Cloudflare ara ekranı / 403 gerçek site değildir; bunu video olarak üretme.
+  if ((resp?.status() ?? 0) >= 400 || /bir dakika|just a moment|attention required|checking your browser/i.test(report.homeTitle)) {
+    report.blocked = true;
+    throw new Error(`Siteye erişim engellendi (HTTP ${resp?.status()}, başlık: "${report.homeTitle}"). Cloudflare bot koruması olabilir.`);
+  }
   const rects = {
     header: await R(page.locator("header, nav").first()),
     hero: await R(page.locator("main section, section").first()),
@@ -144,6 +154,13 @@ manifest.home = await step("home", async () => {
   report.homeCards = cards.length;
   return { name: "home", shot: await shot("home", { full: true }), rects, cards };
 });
+
+if (report.blocked) {
+  await browser.close();
+  await writeReport();
+  console.error("ERİŞİM ENGELLENDİ: yakalama durduruldu, video üretilmeyecek.");
+  process.exit(1);
+}
 
 // ---- Keşfet ----
 const search = await step("search", async () => {
@@ -315,9 +332,11 @@ if (PROFILE_USERNAME) {
 } else warn("Profil sahnesi atlandı: PROFILE_USERNAME verilmedi; kapanışta ana sayfa kullanılacak.");
 
 await browser.close();
-report.finishedAt = new Date().toISOString();
 for (const k of Object.keys(manifest)) if (manifest[k] === undefined) delete manifest[k];
 await fs.writeFile("src/manifest.json", JSON.stringify(manifest, null, 2));
-await fs.writeFile("report/capture-report.json", JSON.stringify(report, null, 2));
+await writeReport();
 console.log("Manifest anahtarları:", Object.keys(manifest).join(", "));
-if (!manifest.home) { console.error("Ana sayfa yakalanamadı."); process.exit(1); }
+
+// Koruma: video için zorunlu parçalardan biri bile yoksa render'a geçme (eksik videoyu tamamlanmış gösterme).
+const missing = ["home", "search", "anime", "watch"].filter((k) => !manifest[k]);
+if (missing.length) { console.error("Zorunlu yakalamalar eksik:", missing.join(", ")); process.exit(1); }
