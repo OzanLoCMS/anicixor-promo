@@ -9,6 +9,8 @@ const OUT = "public/captures";
 const W = 1920;
 const H = 1080;
 const DSF = Number(process.env.DSF ?? 2);
+const STEP_TIMEOUT_MS = 150_000;
+const GLOBAL_TIMEOUT_MS = 12 * 60_000;
 
 const report = {
   startedAt: new Date().toISOString(),
@@ -20,29 +22,53 @@ const report = {
   chosen: {},
   player: {},
 };
-const warn = (m) => { report.warnings.push(m); console.log("UYARI:", m); };
+const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
+const warn = (m) => { report.warnings.push(m); log("UYARI:", m); };
 
 await fs.mkdir(OUT, { recursive: true });
 await fs.mkdir("report", { recursive: true });
 
+const writeReport = async () => {
+  report.finishedAt = new Date().toISOString();
+  await fs.writeFile("report/capture-report.json", JSON.stringify(report, null, 2));
+};
+
+// Bekçi: tüm yakalama süresi aşılırsa raporu yazıp hata ile çık (sonsuza kadar asılı kalma).
+const watchdog = setTimeout(async () => {
+  report.timedOut = true;
+  warn("GENEL ZAMAN AŞIMI: yakalama " + GLOBAL_TIMEOUT_MS / 60000 + " dakikayı aştı.");
+  try { await writeReport(); } catch {}
+  process.exit(3);
+}, GLOBAL_TIMEOUT_MS);
+watchdog.unref();
+
 const launchOpts = process.env.CHROME_PATH
   ? { executablePath: process.env.CHROME_PATH, args: ["--no-sandbox", "--autoplay-policy=no-user-gesture-required"] }
   : { channel: "chrome", args: ["--autoplay-policy=no-user-gesture-required"] };
+log("Tarayıcı başlatılıyor");
 const browser = await chromium.launch(launchOpts);
 const context = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: DSF, locale: "tr-TR" });
+context.setDefaultTimeout(20000);
+context.setDefaultNavigationTimeout(30000);
 const page = await context.newPage();
 page.on("console", (msg) => { if (msg.type() === "error" && report.consoleErrors.length < 30) report.consoleErrors.push(msg.text().slice(0, 200)); });
 page.on("pageerror", (e) => { if (report.consoleErrors.length < 30) report.consoleErrors.push("pageerror: " + String(e.message).slice(0, 200)); });
 
+// Her adım zaman sınırlıdır ve başlangıç/bitişi günlüğe yazılır.
 const step = async (name, fn) => {
   const t = Date.now();
+  log("ADIM başladı:", name);
   try {
-    const r = await fn();
+    const r = await Promise.race([
+      fn(),
+      new Promise((_, rej) => setTimeout(() => rej(new Error(`adım zaman aşımı (${STEP_TIMEOUT_MS / 1000} sn)`)), STEP_TIMEOUT_MS)),
+    ]);
     report.steps.push({ name, ok: true, ms: Date.now() - t });
+    log("ADIM bitti:", name, Date.now() - t, "ms");
     return r;
   } catch (e) {
     report.steps.push({ name, ok: false, ms: Date.now() - t, error: String(e.message).split("\n")[0] });
-    console.log("ADIM HATASI:", name, String(e.message).split("\n")[0]);
+    log("ADIM HATASI:", name, String(e.message).split("\n")[0]);
     return undefined;
   }
 };
@@ -121,14 +147,9 @@ const cardRects = async (vp = false) =>
 
 const manifest = { capturedAt: new Date().toISOString() };
 
-const writeReport = async () => {
-  report.finishedAt = new Date().toISOString();
-  await fs.writeFile("report/capture-report.json", JSON.stringify(report, null, 2));
-};
-
 // ---- Logo ----
 await step("logo", async () => {
-  const res = await page.request.get(BASE + "/favicon.png");
+  const res = await page.request.get(BASE + "/favicon.png", { timeout: 20000 });
   if (!res.ok()) throw new Error("favicon.png " + res.status());
   const buf = await res.body();
   await fs.writeFile(`${OUT}/logo.png`, buf);
@@ -156,7 +177,7 @@ manifest.home = await step("home", async () => {
 });
 
 if (report.blocked) {
-  await browser.close();
+  await browser.close().catch(() => {});
   await writeReport();
   console.error("ERİŞİM ENGELLENDİ: yakalama durduruldu, video üretilmeyecek.");
   process.exit(1);
@@ -185,7 +206,7 @@ manifest.search = search;
 // ---- Anime ve bölüm seçimi (herkese açık sitemap'ler) ----
 const locs = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 const picked = await step("pick-anime", async () => {
-  const get = async (p) => (await page.request.get(BASE + p)).text();
+  const get = async (p) => (await page.request.get(BASE + p, { timeout: 20000 })).text();
   const animeLocs = locs(await get("/sitemap-animes.xml"));
   const epLocs = locs(await get("/sitemap-episodes.xml"));
   const counts = new Map();
@@ -243,6 +264,7 @@ if (picked?.episodeUrl) {
     report.player.classes = await page.evaluate(() => [...new Set([...document.querySelectorAll('[class*="acx-"]')].flatMap((e) => [...e.classList].filter((c) => c.startsWith("acx-"))))].slice(0, 300));
     report.player.iframes = await page.evaluate(() => [...document.querySelectorAll("iframe")].map((f) => { try { return new URL(f.src).origin; } catch { return "(src yok)"; } }));
     report.player.hasVideoTag = (await page.locator("video").count()) > 0;
+    log("Oynatıcı keşfi tamam; sınıf sayısı:", report.player.classes.length);
 
     const playerLoc = page.locator('.acx-player, [class*="acx-player"]').first();
     let player = await R(playerLoc, true);
@@ -250,15 +272,17 @@ if (picked?.episodeUrl) {
     if (!player) { player = await R(page.locator("iframe").first(), true); warn("Oynatıcı iframe olarak varsayıldı."); }
     if (!player) throw new Error("oynatıcı bulunamadı");
 
-    // Oynatmayı başlat (sessiz) ve karenin gelmesini bekle.
+    // Oynatmayı başlat (sessiz). play() sonuçlanmazsa 8 sn sonra vazgeç; asılı kalma.
     report.player.playback = await page.evaluate(async () => {
       const v = document.querySelector("video");
       if (!v) return { video: false };
       v.muted = true;
-      try { await v.play(); } catch (e) { return { video: true, played: false, err: String(e).slice(0, 80) }; }
+      const timeout = (ms) => new Promise((_, rej) => setTimeout(() => rej(new Error("play() zaman aşımı")), ms));
+      try { await Promise.race([v.play(), timeout(8000)]); } catch (e) { return { video: true, played: false, err: String(e.message || e).slice(0, 80), readyState: v.readyState }; }
       await new Promise((r) => setTimeout(r, 4000));
       return { video: true, played: !v.paused, readyState: v.readyState, currentTime: Math.round(v.currentTime * 10) / 10, w: v.videoWidth, h: v.videoHeight };
     });
+    log("Oynatma durumu:", JSON.stringify(report.player.playback));
 
     const ctrlLoc = page.locator('.acx-player button, .acx-player [role="button"], .acx-player [role="menuitem"]');
     report.player.controls = await ctrlLoc.evaluateAll(eval(`(els) => els.slice(0, 80).map(${describe})`));
@@ -278,6 +302,7 @@ if (picked?.episodeUrl) {
     const states = [];
     await reveal();
     states.push({ name: "controls", shot: await shot("watch-controls"), rects: { player } });
+    log("Kontroller durumu yakalandı");
 
     const settingsBtn = await find(/ayar|setting|gear|cog/i);
     if (!settingsBtn) warn("Ayarlar düğmesi bulunamadı (kalite menüsü yakalanamadı).");
@@ -331,12 +356,13 @@ if (PROFILE_USERNAME) {
   });
 } else warn("Profil sahnesi atlandı: PROFILE_USERNAME verilmedi; kapanışta ana sayfa kullanılacak.");
 
-await browser.close();
+await Promise.race([browser.close().catch(() => {}), new Promise((r) => setTimeout(r, 10000))]);
 for (const k of Object.keys(manifest)) if (manifest[k] === undefined) delete manifest[k];
 await fs.writeFile("src/manifest.json", JSON.stringify(manifest, null, 2));
 await writeReport();
-console.log("Manifest anahtarları:", Object.keys(manifest).join(", "));
+log("Manifest anahtarları:", Object.keys(manifest).join(", "));
 
 // Koruma: video için zorunlu parçalardan biri bile yoksa render'a geçme (eksik videoyu tamamlanmış gösterme).
 const missing = ["home", "search", "anime", "watch"].filter((k) => !manifest[k]);
 if (missing.length) { console.error("Zorunlu yakalamalar eksik:", missing.join(", ")); process.exit(1); }
+process.exit(0);
