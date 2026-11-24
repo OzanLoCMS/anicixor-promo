@@ -1,0 +1,247 @@
+{
+  "startedAt": "2026-11-24T08:06:10.747Z",
+  "base": "https://anicixor.fun",
+  "steps": [
+    {
+      "name": "logo",
+      "ok": true,
+      "ms": 176
+    },
+    {
+      "name": "home",
+      "ok": true,
+      "ms": 6464
+    },
+    {
+      "name": "search",
+      "ok": true,
+      "ms": 8601
+    },
+    {
+      "name": "pick-anime",
+      "ok": true,
+      "ms": 305
+    },
+    {
+      "name": "anime",
+      "ok": true,
+      "ms": 7021
+    },
+    {
+      "name": "watch",
+      "ok": true,
+      "ms": 23135
+    }
+  ],
+  "warnings": [
+    "Ayarlar tıklanamadı: locator.click: Timeout 3000ms exceeded.",
+    "Kalite öğesi bulunamadı.",
+    "Profil sahnesi atlandı: PROFILE_USERNAME verilmedi; kapanışta ana sayfa kullanılacak."
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 400 ()",
+    "Access to fetch at 'https://tau-video.xyz/api/video/685c03726ab95c187cffff62' from origin 'https://anicixor.fun' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on ",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to video at 'https://tau-video.xyz/embed/685c03726ab95c187cffff62' from origin 'https://anicixor.fun' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the ",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to video at 'https://tau-video.xyz/embed/685c03726ab95c187cffff62' from origin 'https://anicixor.fun' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the ",
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "Refused to display 'https://tau-video.xyz/' in a frame because it set 'X-Frame-Options' to 'sameorigin'."
+  ],
+  "hidden": {
+    "home": 0,
+    "anime": 15,
+    "watch": 13
+  },
+  "chosen": {
+    "animeSlug": "my-dress-up-darling",
+    "episodeCount": 24,
+    "episodeUrl": "https://anicixor.fun/watch/my-dress-up-darling/sezon-1/bolum-1",
+    "animeCount": 20
+  },
+  "player": {
+    "classes": [
+      "acx-maint-checked",
+      "acx-player",
+      "acx-buffer-spinner",
+      "acx-top-bar",
+      "acx-logo",
+      "acx-logo-dot",
+      "acx-gesture-layer",
+      "acx-center-feedback",
+      "acx-seek-flash",
+      "acx-2x-badge",
+      "acx-osd",
+      "acx-osd-track",
+      "acx-osd-fill",
+      "acx-lock-btn",
+      "acx-next-card",
+      "acx-next-card-head",
+      "acx-next-ring",
+      "acx-next-label",
+      "acx-next-sub",
+      "acx-next-actions",
+      "acx-next-cancel",
+      "acx-next-play",
+      "acx-controls",
+      "acx-progress-wrap",
+      "acx-preview",
+      "acx-preview-time",
+      "acx-progress",
+      "acx-buffer",
+      "acx-progress-bar",
+      "acx-bar-row",
+      "acx-controls-left",
+      "acx-btn",
+      "acx-tt",
+      "acx-volume-wrap",
+      "acx-volume-slider",
+      "acx-time",
+      "acx-controls-right",
+      "acx-mobile-only",
+      "acx-settings-panel",
+      "acx-settings-header",
+      "acx-back",
+      "acx-settings-body",
+      "acx-settings-page",
+      "acx-settings-item",
+      "acx-chev",
+      "acx-fit-btn",
+      "acx-center-controls",
+      "acx-cc-btn",
+      "acx-cc-disabled"
+    ],
+    "iframes": [
+      "https://tau-video.xyz",
+      "https://googleads.g.doubleclick.net",
+      "https://www.google.com",
+      "https://googleads.g.doubleclick.net"
+    ],
+    "hasVideoTag": true,
+    "playback": {
+      "video": true,
+      "played": false,
+      "err": "play() zaman aşımı",
+      "readyState": 0
+    },
+    "controls": [
+      {
+        "tag": "BUTTON",
+        "cls": "mt-4 px-6 py-2 rounded-lg transition text-white",
+        "label": null,
+        "title": null,
+        "text": "Tekrar Dene"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-lock-btn",
+        "label": null,
+        "title": "Kilidi Aç",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-next-cancel",
+        "label": null,
+        "title": null,
+        "text": "İptal"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-next-play",
+        "label": null,
+        "title": null,
+        "text": "Şimdi Oynat"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-btn play-btn",
+        "label": null,
+        "title": "Oynat/Durdur",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-btn",
+        "label": null,
+        "title": "Sessiz",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-btn acx-mobile-only",
+        "label": null,
+        "title": "Kilitle",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-btn",
+        "label": null,
+        "title": "Ayarlar",
+        "text": "Ayarlar"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-back",
+        "label": null,
+        "title": null,
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-btn hidden sm:inline-flex",
+        "label": null,
+        "title": "Pencere içi Pencere",
+        "text": "Mini Player"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-btn",
+        "label": null,
+        "title": "Sinema Modu",
+        "text": "Sinema Modu"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-btn acx-fit-btn",
+        "label": null,
+        "title": "Görüntü boyutu",
+        "text": "Görüntü: Doldur"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-btn",
+        "label": null,
+        "title": "Tam Ekran",
+        "text": "Tam Ekran"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-cc-btn acx-cc-disabled",
+        "label": "Önceki bölüm",
+        "title": "Önceki bölüm",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-cc-btn big",
+        "label": "Oynat / Durdur",
+        "title": null,
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "acx-cc-btn",
+        "label": "Sonraki bölüm",
+        "title": "Sonraki bölüm",
+        "text": ""
+      }
+    ]
+  },
+  "homeStatus": 200,
+  "homeTitle": "Ana Sayfa - Anicixor",
+  "homeCards": 9,
+  "finishedAt": "2026-11-24T08:06:57.056Z"
+}

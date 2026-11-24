@@ -1,0 +1,20 @@
+08:06:10 Tarayıcı başlatılıyor
+08:06:11 ADIM başladı: logo
+08:06:11 ADIM bitti: logo 176 ms
+08:06:11 ADIM başladı: home
+08:06:17 ADIM bitti: home 6464 ms
+08:06:17 ADIM başladı: search
+08:06:26 ADIM bitti: search 8601 ms
+08:06:26 ADIM başladı: pick-anime
+08:06:26 ADIM bitti: pick-anime 305 ms
+08:06:26 ADIM başladı: anime
+08:06:33 ADIM bitti: anime 7021 ms
+08:06:33 ADIM başladı: watch
+08:06:38 Oynatıcı keşfi tamam; sınıf sayısı: 49
+08:06:46 Oynatma durumu: {"video":true,"played":false,"err":"play() zaman aşımı","readyState":0}
+08:06:47 Kontroller durumu yakalandı
+08:06:50 UYARI: Ayarlar tıklanamadı: locator.click: Timeout 3000ms exceeded.
+08:06:51 UYARI: Kalite öğesi bulunamadı.
+08:06:56 ADIM bitti: watch 23135 ms
+08:06:56 UYARI: Profil sahnesi atlandı: PROFILE_USERNAME verilmedi; kapanışta ana sayfa kullanılacak.
+08:06:57 Manifest anahtarları: capturedAt, logo, home, search, anime, watch

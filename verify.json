@@ -1,0 +1,270 @@
+{
+  "file": "out/anicixor-promo.mp4",
+  "checks": {
+    "codec_h264": true,
+    "resolution_1920x1080": true,
+    "fps_30": true,
+    "pix_fmt_yuv420p": true,
+    "duration_40_50s": true,
+    "size_over_1MB": true,
+    "full_decode": true,
+    "no_blank_scenes": true,
+    "not_mostly_frozen": true
+  },
+  "problems": [],
+  "probe": {
+    "codec": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "fps": "30/1",
+    "pix_fmt": "yuv420p",
+    "frames": 1410,
+    "duration": 47,
+    "size": 20070265
+  },
+  "perSecond": [
+    {
+      "t": 0,
+      "yavg": 29.1,
+      "ydif": 0
+    },
+    {
+      "t": 1,
+      "yavg": 31.2,
+      "ydif": 2.11
+    },
+    {
+      "t": 2,
+      "yavg": 31.5,
+      "ydif": 0.68
+    },
+    {
+      "t": 3,
+      "yavg": 31.5,
+      "ydif": 0
+    },
+    {
+      "t": 4,
+      "yavg": 48.6,
+      "ydif": 22.14
+    },
+    {
+      "t": 5,
+      "yavg": 112.2,
+      "ydif": 75.89
+    },
+    {
+      "t": 6,
+      "yavg": 108.9,
+      "ydif": 18.65
+    },
+    {
+      "t": 7,
+      "yavg": 174.3,
+      "ydif": 105.08
+    },
+    {
+      "t": 8,
+      "yavg": 174.3,
+      "ydif": 57.36
+    },
+    {
+      "t": 9,
+      "yavg": 178.4,
+      "ydif": 53.11
+    },
+    {
+      "t": 10,
+      "yavg": 178.4,
+      "ydif": 0.05
+    },
+    {
+      "t": 11,
+      "yavg": 109.6,
+      "ydif": 93.66
+    },
+    {
+      "t": 12,
+      "yavg": 180.9,
+      "ydif": 108.47
+    },
+    {
+      "t": 13,
+      "yavg": 194.4,
+      "ydif": 47.46
+    },
+    {
+      "t": 14,
+      "yavg": 196.8,
+      "ydif": 33.09
+    },
+    {
+      "t": 15,
+      "yavg": 190.9,
+      "ydif": 41.82
+    },
+    {
+      "t": 16,
+      "yavg": 190.9,
+      "ydif": 11.49
+    },
+    {
+      "t": 17,
+      "yavg": 182.5,
+      "ydif": 44.78
+    },
+    {
+      "t": 18,
+      "yavg": 200.5,
+      "ydif": 60.7
+    },
+    {
+      "t": 19,
+      "yavg": 199.6,
+      "ydif": 38.49
+    },
+    {
+      "t": 20,
+      "yavg": 199.5,
+      "ydif": 7.9
+    },
+    {
+      "t": 21,
+      "yavg": 197.7,
+      "ydif": 41.81
+    },
+    {
+      "t": 22,
+      "yavg": 198,
+      "ydif": 12
+    },
+    {
+      "t": 23,
+      "yavg": 210.7,
+      "ydif": 38.18
+    },
+    {
+      "t": 24,
+      "yavg": 210.6,
+      "ydif": 18.1
+    },
+    {
+      "t": 25,
+      "yavg": 223.6,
+      "ydif": 21.75
+    },
+    {
+      "t": 26,
+      "yavg": 222.8,
+      "ydif": 7.79
+    },
+    {
+      "t": 27,
+      "yavg": 222.8,
+      "ydif": 1.64
+    },
+    {
+      "t": 28,
+      "yavg": 223.5,
+      "ydif": 6.22
+    },
+    {
+      "t": 29,
+      "yavg": 223,
+      "ydif": 5.3
+    },
+    {
+      "t": 30,
+      "yavg": 229.8,
+      "ydif": 14.25
+    },
+    {
+      "t": 31,
+      "yavg": 230.1,
+      "ydif": 4.82
+    },
+    {
+      "t": 32,
+      "yavg": 222.3,
+      "ydif": 14.46
+    },
+    {
+      "t": 33,
+      "yavg": 225,
+      "ydif": 13.46
+    },
+    {
+      "t": 34,
+      "yavg": 225.2,
+      "ydif": 6.08
+    },
+    {
+      "t": 35,
+      "yavg": 225.1,
+      "ydif": 3.76
+    },
+    {
+      "t": 36,
+      "yavg": 225.1,
+      "ydif": 2.73
+    },
+    {
+      "t": 37,
+      "yavg": 150.7,
+      "ydif": 80.16
+    },
+    {
+      "t": 38,
+      "yavg": 143.7,
+      "ydif": 30.95
+    },
+    {
+      "t": 39,
+      "yavg": 139,
+      "ydif": 24.14
+    },
+    {
+      "t": 40,
+      "yavg": 137.7,
+      "ydif": 10.06
+    },
+    {
+      "t": 41,
+      "yavg": 48.1,
+      "ydif": 90.79
+    },
+    {
+      "t": 42,
+      "yavg": 29.5,
+      "ydif": 18.99
+    },
+    {
+      "t": 43,
+      "yavg": 31.3,
+      "ydif": 2.16
+    },
+    {
+      "t": 44,
+      "yavg": 31.5,
+      "ydif": 0.38
+    },
+    {
+      "t": 45,
+      "yavg": 31.5,
+      "ydif": 0.05
+    },
+    {
+      "t": 46,
+      "yavg": 31.6,
+      "ydif": 0.03
+    }
+  ],
+  "darkSeconds": [],
+  "frozenSeconds": [
+    3,
+    46
+  ],
+  "contactSheet": "report/contact-sheet.jpg",
+  "passed": true
+}

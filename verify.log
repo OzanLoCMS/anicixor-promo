@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "probe": {
+    "codec": "h264",
+    "profile": "High",
+    "width": 1920,
+    "height": 1080,
+    "fps": "30/1",
+    "pix_fmt": "yuv420p",
+    "frames": 1410,
+    "duration": 47,
+    "size": 20070265
+  },
+  "problems": []
+}
